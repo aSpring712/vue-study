@@ -1,0 +1,51 @@
+<template>
+    <div>
+        <v-container>
+            <v-card>
+                <v-container>
+                    <v-subheader>회원가입</v-subheader>
+                    <v-form>
+                        <v-text-field
+                            label="이메일"
+                            type="email"
+                        />
+                        <v-text-field
+                            label="비밀번호"
+                            type="password"
+                        />
+                        <v-text-field
+                            label="비밀번호확인"
+                            type="password"
+                        />
+                        <v-text-field
+                            label="닉네임"
+                            type="nickname"
+                            required
+                        />
+                        <v-checkbox 
+                            required
+                            label="무조건 동의합니다."
+                        />
+                        <v-btn color="green" type="submit">가입하기</v-btn>
+                    </v-form>
+                </v-container>
+            </v-card>
+        </v-container>
+    </div>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                name: 'Nuxt.js',
+            }
+        },
+        head() {
+            return {
+                title: '회원가입',
+            }
+        },
+    }
+</script>
+<style>
+</style>
