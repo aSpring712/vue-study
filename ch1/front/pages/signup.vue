@@ -1,52 +1,62 @@
 <template>
-    <div>
+  <div>
+    <v-container>
+      <v-card>
         <v-container>
-            <v-card>
-                <v-container>
-                    <v-subheader>회원가입</v-subheader>
-                    <!-- 아래 5개 항목이 모두 입력되었다면 valid가 true가 되며 제출 버튼 활성화(클릭 가능) : 뷰티파이에서 제공하는 기능 -->
-                    <!-- ref="form" 지정하고, this.$refs.form.validate() 했을 때, 값이 모두 유효하면 valid가 자동으로 true로 바뀜 -->
-                    <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
-                        <v-text-field
-                            v-model="email"
-                            label="이메일"
-                            type="email"
-                            :rules="emailRules"
-                            required
-                        />
-                        <v-text-field
-                            v-model="password"
-                            label="비밀번호"
-                            type="password"
-                            :rules="passwordRules"
-                            required
-                        />
-                        <v-text-field
-                            v-model="passwordCheck"
-                            label="비밀번호확인"
-                            type="password"
-                            :rules="passwordCheckRules"
-                            required
-                        />
-                        <v-text-field
-                            v-model="nickname"
-                            label="닉네임"
-                            type="nickname"
-                            :rules="nicknameRules"
-                            required
-                        />
-                        <v-checkbox
-                            v-model="terms" 
-                            label="무조건 동의합니다."
-                            :rules="[v => !!v || '약관에 동의해야 합니다.']"
-                            required
-                        />
-                        <v-btn color="green" type="submit" :disabled="!valid">가입하기</v-btn>
-                    </v-form>
-                </v-container>
-            </v-card>
+          <v-subheader>회원가입</v-subheader>
+          <!-- 아래 5개 항목이 모두 입력되었다면 valid가 true가 되며 제출 버튼 활성화(클릭 가능) : 뷰티파이에서 제공하는 기능 -->
+          <!-- ref="form" 지정하고, this.$refs.form.validate() 했을 때, 값이 모두 유효하면 valid가 자동으로 true로 바뀜 -->
+          <v-form
+            ref="form" 
+            v-model="valid" 
+            @submit.prevent="onSubmitForm"
+          >
+            <v-text-field
+              v-model="email"
+              label="이메일"
+              type="email"
+              :rules="emailRules"
+              required
+            />
+            <v-text-field
+              v-model="password"
+              label="비밀번호"
+              type="password"
+              :rules="passwordRules"
+              required
+            />
+            <v-text-field
+              v-model="passwordCheck"
+              label="비밀번호확인"
+              type="password"
+              :rules="passwordCheckRules"
+              required
+            />
+            <v-text-field
+              v-model="nickname"
+              label="닉네임"
+              type="nickname"
+              :rules="nicknameRules"
+              required
+            />
+            <v-checkbox
+              v-model="terms" 
+              label="무조건 동의합니다."
+              :rules="[v => !!v || '약관에 동의해야 합니다.']"
+              required
+            />
+            <v-btn
+              color="green" 
+              type="submit" 
+              :disabled="!valid"
+            >
+              가입하기
+            </v-btn>
+          </v-form>
         </v-container>
-    </div>
+      </v-card>
+    </v-container>
+  </div>
 </template>
 <script>
     export default {
@@ -78,6 +88,11 @@
                 ],
             }
         },
+        head() {
+            return {
+                title: '회원가입',
+            }
+        },
         methods: {
             onSubmitForm() {
                 // // 이렇게 해주면, vuetify에서 알아서 form 내용들을 검증하고 모두 유효할 시
@@ -91,11 +106,6 @@
                     alert('폼이 유효하지 않습니다.');
                 }
             },
-        },
-        head() {
-            return {
-                title: '회원가입',
-            }
         },
     }
 </script>

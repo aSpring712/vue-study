@@ -2,22 +2,22 @@
   {
     "name": "profile",
     "path": "/profile",
-    "component": "C:\\\\development\\\\inflearn\\\\vue-nodebird\\\\vue-study\\\\pages\\\\profile.vue",
+    "component": "C:\\\\development\\\\inflearn\\\\vue-nodebird\\\\ch1\\\\front\\\\pages\\\\profile.vue",
     "chunkName": "pages/profile",
-    "_name": "_60e54528"
+    "_name": "_10a42f2d"
   },
   {
     "name": "signup",
     "path": "/signup",
-    "component": "C:\\\\development\\\\inflearn\\\\vue-nodebird\\\\vue-study\\\\pages\\\\signup.vue",
+    "component": "C:\\\\development\\\\inflearn\\\\vue-nodebird\\\\ch1\\\\front\\\\pages\\\\signup.vue",
     "chunkName": "pages/signup",
-    "_name": "_40d24eb6"
+    "_name": "_4d236a78"
   },
   {
     "name": "index",
     "path": "/",
-    "component": "C:\\\\development\\\\inflearn\\\\vue-nodebird\\\\vue-study\\\\pages\\\\index.vue",
+    "component": "C:\\\\development\\\\inflearn\\\\vue-nodebird\\\\ch1\\\\front\\\\pages\\\\index.vue",
     "chunkName": "pages/index",
-    "_name": "_1e74a256"
+    "_name": "_f5900654"
   }
 ]
