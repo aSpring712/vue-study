@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <!-- 패딩을 주는 역할 -->
-    <v-container>
+    <!-- v-container : 패딩을 주는 역할 -->
+    <!-- 로그인 여부(vuex store에 있는 state)에 따라 분기 처리 -->
+
+    <!-- 로그인 안했을 때 -->
+    <v-container v-if="!me">
       <v-card>
         <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
           <v-container>
@@ -30,13 +32,21 @@
         </v-form>
       </v-card>
     </v-container>
-  </div>
+
+    <!-- 로그인 시 -->
+    <v-container v-else>
+      <v-card>
+        {{ me.nickname }}님 로그인되었습니다.
+        <v-btn @click="onLogOut">로그아웃</v-btn>
+      </v-card>
+    </v-container>
 </template>
 
 <script>
 export default {
     data() {
         return {
+            // 로그인
             valid: false,
 
             email: '',
@@ -51,14 +61,31 @@ export default {
             ],
         }
     },
+    computed: {
+      me() {
+        return this.$store.state.users.me;
+      },
+      // nickname() {
+      //   return this.$store.state.users.me.nickname;
+      // }
+    },
     methods: {
         onSubmitForm() {
             if(this.$refs.form.validate()) {
-                alert('로그인 시도!!')
+                // alert('로그인 시도!!')
+
+                this.$store.dispatch('users/logIn', {
+                  email: this.email,
+                  nickname: 'dummy nickname',
+                })
             } else {
                 alert('로그인 폼이 유효하지 않음!!')
             }
         },
+        onLogOut() {
+          // logOut action이 dispatch되고, setMe가 commit됨
+          this.$store.dispatch('users/logOut');
+        }
     },
 }
 </script>

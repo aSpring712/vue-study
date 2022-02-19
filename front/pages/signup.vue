@@ -101,11 +101,64 @@
                 // console.log(this.valid);
 
                 if(this.$refs.form.validate()) { // 2. 이렇게 해도 true / false를 반환하기 때문에 여기서 조작해도 됨
-                    alert('회원가입 시도!');
+                    // alert('회원가입 시도!');
+
+                    // // signUp action을 dispatch -> setMe mutations을 commit
+                    // this.$store.dispatch('users/signUp', {
+                    //   nickname: this.nickname,
+                    //   email: this.email
+                    // }); // users 모듈의 actions 실행
+
+                    // // 회원가입이 완료되면, 페이지 변경
+                    // /* 주의!! 위의 actions는 비동기이므로
+                    // --> 위의 작업과 아래 페이지 이동 작업의 순서가 달라질 수 있음
+                    // --> 물론 실행 자체는 위에서 아래로 되지만 실행이 완료되는 시점이 다를 수 있음
+                    // --> 따라서 페이지 이동이 먼저 되고, 그 다음 signUp 처리가 완료될 수 있음
+                    // --> 회원가입에 성공한 경우만 main 페이지로 갈 수 있도록 실행 순서를 맞춰주어야 함
+                    
+                    // dispatch는 자체적으로 비동기이면서 promise이기 때문에 .then(() => {})을 붙여줄 수 있음 */
+                    // this.$router.push({
+                    //   path: '/',
+                    // });
+
+
+                    // signUp action을 dispatch -> setMe mutations을 commit
+                    // action이 비동기이기 때문에 then과 catch를 써주어야 실행순서가 보장됨
+                    this.$store.dispatch('users/signUp', {
+                        nickname: this.nickname,
+                        email: this.email
+                      })
+                        .then(() => { // .then()으로 실행 순서 보장 -> 비동기 promise가 완료된 후 아래 실행
+                          this.$router.push({
+                            path: '/',
+                          });
+                        })
+                          .catch(() => { // 회원가입 실패 시
+                            alert('회원가입에 실패했습니다.')
+                        });
                 } else {
                     alert('폼이 유효하지 않습니다.');
                 }
             },
+          //   /* async await로 순서를 보장해주어도 됨( .then과 .catch 대신 )
+          // async await는 무조건 try catch로 감싸주어야 함 */ 
+          // async onSubmitForm() {
+          //       if(this.$refs.form.validate()) { 
+          //         try {
+          //           const result = await this.$store.dispatch('users/signUp', {
+          //               nickname: this.nickname,
+          //               email: this.email
+          //           })
+                    
+          //           // result가 들어오는 것에 따라 페이지 이동 처리
+                    
+          //         } catch(err) {
+          //           console.log(e)
+          //         }
+          //       } else {
+          //           alert('폼이 유효하지 않습니다.');
+          //       }
+          //   },
         },
     }
 </script>

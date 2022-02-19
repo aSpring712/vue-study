@@ -41,8 +41,8 @@
     </nav>        
 
     <!-- vuex store의 모듈들 끌어다 써보기 -->
-    <div>{{ name }}</div>
-    <v-btn @click="onChangeName">바이바이</v-btn>
+    <!-- <div>{{ name }}</div>
+    <v-btn @click="onChangeName">바이바이</v-btn> -->
 
     <!-- 보통 가로(row)로 나누고, 그 후 세로(col -> 몇대 몇으로 나눌 것인지 중요)로 나눔 -->
     <!-- no-gutters : 세로줄 간의 padding을 없애줌 -->
@@ -81,15 +81,15 @@ export default{
 //        }
 //    }
     computed: {
-        name() {
-            return this.$store.state.posts.name;
-        }
+        // name() {
+        //     return this.$store.state.posts.name;
+        // }
     },
     methods: {
-        onChangeName() {
-            // vuex store 모듈 사용 -> posts 모듈의 bye라는 mutation 사용
-            this.$store.commit('posts/BYE')
-        },
+        // onChangeName() {
+        //     // vuex store 모듈 사용 -> posts 모듈의 bye라는 mutation 사용
+        //     this.$store.commit('posts/BYE')
+        // },
     }
 };
 </script>
