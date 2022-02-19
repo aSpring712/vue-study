@@ -29,13 +29,21 @@ export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 
     signUp(context, payload) { // context는 객체
         // console.log(context)로 구조를 확인해 볼 수 있음
         // 서버에 회원가입 요청을 보내는 부분
+        // 서버에서 응답이 오면, state 변경 및 로그인 처리
+        commit('setMe', payload);
+        // context 자리에 { commit, state } 해서
+        // state.me = payload // 이렇게 써줄 수도 있지만 보통 state 변경하는 부분은 동기적으로 변경하는 것이므로 mutations로 만들어주는 것이 좋음
+        // -> actions와 mutations를 완전히 분리
+        
     },
     logIn({ commit, dispatch, state, rootState, getters, rootGetters }, payload) { // context를 구조분해 해서 쓰면 다음과 같음
         // commit : mutations 실행
         // dispatch : actions 실행
         // rootState, rootGetters : index 모듈의 state와 getters
+        
+        commit('setMe', payload);
     },
-    logOut(context, payload) {
-
+    logOut({ commit }, payload) {
+        commit('setMe', null);
     },
 }
