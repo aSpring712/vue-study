@@ -23,7 +23,7 @@
           <!-- # : v-slot -->
           <template #activator="{ on }">
             <!-- v-menu 안 template 내에 원하는 대표 버튼을 넣기 -->
-            <v-btn text color="orange" v-on="on">
+            <v-btn text color="orange" :disabled="!me || me.nickname != post.User.nickname" v-on="on">
               <v-icon>mdi-dots-horizontal</v-icon>
             </v-btn>
           </template>
@@ -59,6 +59,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import CommentForm from '~/components/CommentForm';
 
 export default {
@@ -77,6 +78,9 @@ export default {
       return {
         commentOpened: false,
       }
+    },
+    computed: {
+      ...mapState('users', ['me'])
     },
     methods: {
       onRemovePost() {

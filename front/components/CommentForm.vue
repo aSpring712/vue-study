@@ -10,7 +10,7 @@
       :success-messages="successMessages"
       @input="onChangeTextarea"      
     />
-    <v-btn color="green" dark absolute top right type="submit">삐약</v-btn>
+    <v-btn color="green" dark absolute top right type="submit" :disabled="!valid">삐약</v-btn>
   </v-form>  
 </template>
 

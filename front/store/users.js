@@ -7,6 +7,10 @@ export const state = () => ({
     // me 속성이 null이면 로그인하지 않은 상태
     // 사용자 정보에 대한 객체가 담겨있으면 로그인한 상태
     // -> 이런 상태를 전역적으로 관리하기 위해 Vuex를 사용
+
+    // 숙제 - 아래 list를 front에 바인딩 후 - 버튼 클릭 시 제거하는 것까지 구현하기
+    followerList: [],
+    followingList: [],
 });
 
 // state 외 나머지는 객체

@@ -36,8 +36,10 @@
     <!-- 로그인 시 -->
     <v-container v-else>
       <v-card>
-        {{ me.nickname }}님 로그인되었습니다.
-        <v-btn @click="onLogOut">로그아웃</v-btn>
+        <v-container>
+          {{ me.nickname }}님 로그인되었습니다.
+          <v-btn @click="onLogOut">로그아웃</v-btn>
+        </v-container>
       </v-card>
     </v-container>
 </template>
@@ -77,6 +79,9 @@ export default {
                 this.$store.dispatch('users/logIn', {
                   email: this.email,
                   nickname: 'dummy nickname',
+                })
+                .then(() => {
+                  this.$router.push({path:'/'})
                 })
             } else {
                 alert('로그인 폼이 유효하지 않음!!')

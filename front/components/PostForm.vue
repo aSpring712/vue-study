@@ -14,8 +14,8 @@
                     clearable
                     label="어떤 신기한 일이 있었나요?"
                     :hide-details="hideDetails"
-                    :success-messages="successMessages"
                     :success="success"
+                    :success-messages="successMessages"
                     :rules="[v => !!v || '내용을 입력하세요.']"
                     @input="onChangeTextarea"
                 />
@@ -33,12 +33,13 @@ import { mapState } from 'vuex';
 export default {
     data() {
         return {
+            valid: false,
+            
             hideDetails: true, // true로 해주면, error msg가 나올 공간을 숨겨두고
-            successMessages: '',
             success: false,
+            successMessages: '',
 
             content: '',
-            valid: false,
         }
     },
     computed: {
@@ -81,9 +82,9 @@ export default {
                 })
                     .then(() => {
                         this.content = '';
-                        this.hideDetails = false;
                         this.success = true;
                         this.successMessages = '게시글 등록 성공!';
+                        this.hideDetails = false;
                     })
                     .catch((err) => {
                         console.log(err)
