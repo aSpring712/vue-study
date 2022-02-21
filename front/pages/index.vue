@@ -2,11 +2,7 @@
   <v-container>
     <PostForm v-if="me" />
     <div>
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      <PostCard />
+      <PostCard v-for="p in mainPosts" :key="p.id" :post="p" />
     </div>
   </v-container>
 </template>
@@ -23,7 +19,10 @@ import PostForm from '../components/PostForm.vue'
       computed: {
         me() {
           return this.$store.state.users.me;
-        }
+        },
+        mainPosts() {
+          return this.$store.state.posts.mainPosts;
+        },
       }
       // 해당 페이지에 head()가 없으면, layout defualt의 head를 사용함
       // head() {
