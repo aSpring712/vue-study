@@ -16,7 +16,7 @@
                     :hide-details="hideDetails"
                     :success-messages="successMessages"
                     :success="success"
-                    :rules="[v => !!v.trim() || '내용을 입력하세요.']"
+                    :rules="[v => !!v || '내용을 입력하세요.']"
                     @input="onChangeTextarea"
                 />
                 <!-- 버튼은 무조건 v-form 내에 -->
@@ -54,10 +54,13 @@ export default {
         ...mapState('users', ['me']) // (모듈명, [인자])
     },
     methods: {
-        onChangeTextarea() { // 한 글자라도 쓰면, 작은 글자 노출하지 않도록 초기화 (게시글 등록 시 초기화 되어야 하니까)
-            this.hideDetails = true;
-            this.success = false;
-            this.successMessages = '';
+        onChangeTextarea(value) { // 한 글자라도 쓰면, 작은 글자 노출하지 않도록 초기화 (게시글 등록 시 초기화 되어야 하니까)
+            // 글이 비어있다가 새로 작성 시 '게시글 등록 성공' 메세지 없애주는 등 초기화
+            if(value && value.length) {
+                this.hideDetails = true;
+                this.success = false;
+                this.successMessages = '';
+            }
         },
         onSubmitForm() {
             if(this.$refs.form.validate()) {

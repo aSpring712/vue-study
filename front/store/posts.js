@@ -17,6 +17,12 @@ export const mutations = {
     removeMainPost(state, payload) {
         const index = state.mainPosts.findIndex(v => v.id === payload.id) // mainPosts 중 id가 내가 넘긴 post의 id값과 같은 것이 있는지 찾아보고
         state.mainPosts.splice(index, 1);
+    },
+    addComment(state, payload) {
+        // 해당하는 게시글을 찾고
+        const index = state.mainPosts.findIndex(v => v.id === payload.postId)
+        // 해당 게시글의 Comments에 댓글 추가
+        state.mainPosts[index].Comments.unshift(payload);
     }
 };
 
@@ -31,5 +37,8 @@ export const actions = {
     },
     remove({commit}, payload) {
         commit('removeMainPost', payload);
+    },
+    addComment({ commit }, payload) {
+        commit('addComment', payload);
     }
 }
