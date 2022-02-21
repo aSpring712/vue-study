@@ -6,12 +6,14 @@
           <v-container>
             <v-subheader>내 프로필</v-subheader>
           </v-container>
-          <v-form>
+          <v-form v-model="valid" @submit.prevent="onChangeNickname">
             <v-text-field 
+              v-model="nickname"
               label="닉네임"
+              :rules="nicknameRules"
               required
             />
-            <v-btn color="blue" type="submit">
+            <v-btn color="blue" type="submit" :disabled=" !valid ">
               수정
             </v-btn>
           </v-form>
@@ -42,7 +44,9 @@
         },
         data() {
             return {
-                name: 'Nuxt.js',
+                valid: false,
+                nickname: '',
+                nicknameRules: [v => !!v || '닉네임을 입력하세요.'],
             }
         },
         // 원래는 html의 head 태그에 들어갈 내용들(template 안에 넣을 수 없음) -> script, title, meta 등을 손쉽게 바꿀 수 있음
@@ -53,7 +57,19 @@
         },
         // computed: {},
         watch: {},
-        methods: {},
+        methods: {
+          onChangeNickname() {
+            this.$store.dispatch('users/chageNickname', {
+              nickname: this.nickname
+            })
+            .then(() => {
+              console
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+          }
+        },
     }
 </script>
 <style>

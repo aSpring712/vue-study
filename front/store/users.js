@@ -15,6 +15,9 @@ export const mutations = { // 단순 동기적 작업 처리
     setMe(state, payload) { // state -> 위의 state에 접근 가능, payload에는 저 state를 어떻게 바꿀 것인지에 대한 정보가 담김
         // state를 mutations를 통해 바꾼다
         state.me = payload;
+    },
+    changeNickname(state, payload) {
+        state.me.nickname = payload.nickname;
     }
 
     /* 주의
@@ -46,4 +49,8 @@ export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 
     logOut({ commit }, payload) {
         commit('setMe', null);
     },
+    chageNickname({ commit }, payload) {
+        // server를 거치는 것이면 무조건 actions로 만들어서 서버 요청을 보낸 후, mutations로 최종적으로 변경
+        commit('changeNickname', payload);
+    }
 }
