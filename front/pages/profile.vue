@@ -22,13 +22,17 @@
       <v-card style="margin-bottom:20px;">
         <v-container>
           <v-subheader>팔로잉</v-subheader>
-          <FollowList v-for="user in followings" :key="user.id" :follow="user" list-type="following" />
+          <!-- 팔로잉 리스트, 팔로워 리스트에서 모두 같은 컴포넌트인 FollowList를 사용하므로 구분을 위해 props를 넘겨주기
+          -> 같은 컴포넌트를 쓰면서 다른 사용자 리스트를 넘겨줄 수 있게 됨 -->
+          <!-- <FollowList v-for="user in followings" :key="user.id" :follow="user" list-type="following" /> -->
+          <FollowList :users="followingList" :remove="removeFollowing" />
         </v-container>
       </v-card>
       <v-card style="margin-bottom:20px;">
         <v-container>
           <v-subheader>팔로워</v-subheader>
-          <FollowList v-for="user in followers" :key="user.id" :follow="user" list-type="follower" />
+          <!-- <FollowList v-for="user in followers" :key="user.id" :follow="user" list-type="follower" /> -->
+          <FollowList :users="followerList" :remove="removeFollower" />
         </v-container>
       </v-card>
     </v-container>
@@ -56,11 +60,11 @@
             }
         },
         computed: {
-          followings() {
-            return this.$store.state.users.followingList
-          },
-          followers() {
+          followerList() {
             return this.$store.state.users.followerList
+          },
+          followingList() {
+            return this.$store.state.users.followingList
           },
         },
         watch: {},
@@ -75,7 +79,16 @@
             .catch((err) => {
               console.log(err)
             })
-          }
+          },
+          removeFollowing(id) {
+            this.$store.dispatch('users/removeFollowing', {
+              // id: id,
+              id // key와 value가 같은 경우는 축약 가능
+            })
+          },
+          removeFollower(id) {
+            this.$store.dispatch('users/removeFollower', {id})
+          },
         },
     }
 </script>

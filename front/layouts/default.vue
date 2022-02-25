@@ -52,6 +52,9 @@
       <!-- 나누는 것 그리드 system -> 보통 12등분 -> 로그인 1 : 컨텐츠 2로 나눌 것임 -->
       <!-- 반응형 -> 그리드 바꾸면 됨 -->
       <!-- 로그인 1 -> 4 -->
+
+      <!-- cols가 xs라고 보면 됨 -->
+      <!-- 기본적으로 cols는 12 고정 -->
       <v-col
         cols="12"
         md="4"
@@ -71,6 +74,8 @@
 </template>
 
 <script>
+// 화면 사이즈별 xs, sm, md, lg, xl
+
 // '~' : 소스들의 directory root -> 상대경로로 쓰기에는 ../../ .. 너무 길고 복잡해짐
 import LoginForm from '~/components/LoginForm.vue';
 
