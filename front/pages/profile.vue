@@ -22,13 +22,13 @@
       <v-card style="margin-bottom:20px;">
         <v-container>
           <v-subheader>팔로잉</v-subheader>
-          <FollowList />
+          <FollowList v-for="user in followings" :key="user.id" :follow="user" list-type="following" />
         </v-container>
       </v-card>
       <v-card style="margin-bottom:20px;">
         <v-container>
           <v-subheader>팔로워</v-subheader>
-          <FollowList />
+          <FollowList v-for="user in followers" :key="user.id" :follow="user" list-type="follower" />
         </v-container>
       </v-card>
     </v-container>
@@ -55,7 +55,14 @@
                 title: '프로필',
             }
         },
-        // computed: {},
+        computed: {
+          followings() {
+            return this.$store.state.users.followingList
+          },
+          followers() {
+            return this.$store.state.users.followerList
+          },
+        },
         watch: {},
         methods: {
           onChangeNickname() {

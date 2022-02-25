@@ -9,8 +9,8 @@ export const state = () => ({
     // -> 이런 상태를 전역적으로 관리하기 위해 Vuex를 사용
 
     // 숙제 - 아래 list를 front에 바인딩 후 - 버튼 클릭 시 제거하는 것까지 구현하기
-    followerList: [],
-    followingList: [],
+    followerList: [{nickname: 'spring', email: 'spring@spring.com'}, {nickname: 'ronnie', email: 'ronnie@ronnie.com'}, {nickname: 'mango', email: 'mango@mango.com'}],
+    followingList: [{nickname: 'happy', email: 'happy@happy.com'}, {nickname: 'sunday', email: 'sunday@sunday.com'}, {nickname: 'moon', email: 'moon@moon.com'}],
 });
 
 // state 외 나머지는 객체
@@ -22,6 +22,14 @@ export const mutations = { // 단순 동기적 작업 처리
     },
     changeNickname(state, payload) {
         state.me.nickname = payload.nickname;
+    },
+    unfollow(state, payload) {
+        const index = state.followingList.findIndex( v => v.email === payload.email)
+        state.followingList.splice(index, 1);
+    },
+    removeFollower(state, payload) {
+        const index = state.followerList.findIndex(v => v.email === payload.email)
+        state.followerList.splice(index, 1);
     }
 
     /* 주의
@@ -56,5 +64,11 @@ export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 
     chageNickname({ commit }, payload) {
         // server를 거치는 것이면 무조건 actions로 만들어서 서버 요청을 보낸 후, mutations로 최종적으로 변경
         commit('changeNickname', payload);
+    },
+    unfollow({ commit }, payload) {
+        commit('unfollow', payload);
+    },
+    removeFollower({ commit }, payload) {
+        commit('removeFollower', payload)
     }
 }
