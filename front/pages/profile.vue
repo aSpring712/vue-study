@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <!-- <div v-if="me"> -->
+    <!-- middleware로 처리 -->
+    <div> 
     <v-container>
       <v-card style="margin-bottom:20px;">
         <v-container>
@@ -46,6 +48,7 @@
         components: {
             FollowList,
         },
+        middleware: 'authenticated',
         data() {
             return {
                 valid: false,
@@ -66,6 +69,9 @@
           followingList() {
             return this.$store.state.users.followingList
           },
+          me() {
+            return this.$store.state.users.me
+          }
         },
         watch: {},
         methods: {

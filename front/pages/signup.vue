@@ -60,6 +60,7 @@
 </template>
 <script>
     export default {
+        middleware: 'anonymous',
         data() {
             return {
                 valid: false, // 회원가입 버튼의 활성화(클릭 가능) 여부
@@ -92,6 +93,23 @@
             return {
                 title: '회원가입',
             }
+        },
+        computed: {
+          // 회원가입 페이지에 있다가 로그인을 통해 로그인 한 경우 회원가입 페이지에서 벗어날 수 있도록, 
+          // store의 me값 존재 여부에 따라, 해당 페이지에 머무를지 아닐지 watch로 me를 감지할 수 있도록 하려고
+          // computed를 통해 store의 me값을 가져오고
+          me() {
+            return this.$store.state.users.me;
+          }
+        },
+        watch: {
+          // watch로 변하는 me값을 감지
+          me(value, oldValue) {
+            if(value) { // me 즉, value가 생긴 경우
+              this.$router.push({path : '/', }); // 프로그래밍적으로 페이지 넘겨줬다고 표현
+              // nuxt.js router, link로 넘겨주는 건 -> 컴포넌트 적으로 넘겨줬다고 표현
+            }
+          },
         },
         methods: {
             onSubmitForm() {

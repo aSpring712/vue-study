@@ -23,7 +23,7 @@ import PostForm from '../components/PostForm.vue'
         mainPosts() {
           return this.$store.state.posts.mainPosts;
         },
-      }
+      },
       // 해당 페이지에 head()가 없으면, layout defualt의 head를 사용함
       // head() {
       //     return {

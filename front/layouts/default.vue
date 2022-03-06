@@ -21,7 +21,7 @@
             :style="{display: 'flex', alignItems: 'center'}"
           />
           <v-btn
-            v-if="me"
+            
             text
             nuxt
             to="/profile"
@@ -30,7 +30,6 @@
             <div>프로필</div>
           </v-btn>
           <v-btn
-            v-if="!me"
             text
             nuxt
             to="/signup"

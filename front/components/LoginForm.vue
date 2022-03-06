@@ -80,9 +80,9 @@ export default {
                   email: this.email,
                   nickname: 'dummy nickname',
                 })
-                .then(() => {
-                  this.$router.push({path:'/'})
-                })
+                // .then(() => {
+                //   this.$router.push({path:'/'})
+                // })
             } else {
                 alert('로그인 폼이 유효하지 않음!!')
             }
@@ -90,6 +90,7 @@ export default {
         onLogOut() {
           // logOut action이 dispatch되고, setMe가 commit됨
           this.$store.dispatch('users/logOut');
+          this.$router.push({path:'/'})
         }
     },
 }
