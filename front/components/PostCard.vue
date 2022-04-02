@@ -5,7 +5,9 @@
       <v-card-text>
         <div>
           <h3>{{ post.User.nickname }}</h3>
-          <div>{{ post.content }}</div>
+          <!-- <div>{{ post.content }}</div> -->
+          <nuxt-link :to="'/post/' + post.id">{{ post.content }}</nuxt-link>
+          <!-- nuxt-link는 새로고침 없이 주소만 바꾸어 줌 -->
         </div>
       </v-card-text>
       <v-card-actions>
@@ -50,6 +52,7 @@
             <!-- h3 -->
             <v-list-item-title>{{ c.User.nickname }}</v-list-item-title>
             <!-- div -->
+            <!-- <v-list-item-subtitle>{{ c.content }}</v-list-item-subtitle> -->
             <v-list-item-subtitle>{{ c.content }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
