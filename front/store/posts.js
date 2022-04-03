@@ -14,7 +14,19 @@ export const state = () => ({
 // module의 mutation 사용법
 // this.$store.commit('posts/bye')
 
+/* limit, totalPosts를 state에 넣지 않은 이유?
+front는 limit과 totalPosts를 알 수가 없기 때문에 이 둘을 모른다고 생각하고 코딩해야 함 */
+const totalPosts = 51; // 101개가 서버에 있다고 가정
 const limit = 10; // 한 번에 불러올 게시글의 개수
+
+/* 실무에서는 Throttling의 개념이 더 들어가고, limit을 사용해 가져오는 방식을 사용하지 않음
+--> 지금은 서버가 없으니까 바로바로 불러와짐 -> 실제로는 네트워크를 갔다오는 시간이 걸림
+ex. Wifi가 느려졌다? 등의 경우 10초 넘으면 사람들이 왔다갔다 하고 고장났나? 생각하므로,
+스크롤 왔다갔다 하면 계속 server에 요청을 보내게 되고 front-end 해커가 됨 -> 이걸 막기 위해
+throttling 기능을 이용
+
+limit을 사용하지 않는 이유 -> 사람들이 중간에 게시글을 새로 쓰거나 삭제하므로, totalPosts가 계속 바뀜
+--> lastId를 기반으로 함 */
 
 export const mutations = {
     // 동기적으로 변경
@@ -34,8 +46,14 @@ export const mutations = {
         state.mainPosts[index].Comments.unshift(payload);
     },
     loadPosts(state) {
+        const diff = totalPosts - state.mainPosts.length // 총 게시물 수 - 현재 내가 불러온 게시글 수 = 아직 불러오지 않은 게시글의 수
+
         // Array(limit).fill() 길이가 limit(10)인 빈 배열을 만드는 방법
-        const fakePosts = Array(limit).fill().map(v => ({ // map 함수로 Dummy data를 만듦
+        // const fakePosts = Array(limit).fill().map(v => ({ // map 함수로 Dummy data를 만듦
+
+        // 아직 불러오지 않은 게시물의 수(diff)가 limit(10) 보다 많으면 limit(10) 까지만 불러오고,
+        // 같거나 더 작으면 diff개 까지만 생성
+        const fakePosts = Array(diff > limit ? limit : diff).fill().map(v => ({ 
             id: Math.random().toString(),
             User: {
                 id: 1,
