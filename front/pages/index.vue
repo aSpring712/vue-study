@@ -2,6 +2,8 @@
   <v-container>
     <PostForm v-if="me" />
     <div>
+      <!-- 현재 반복문(v-for)으로 되어있는데, 실제로 1000개 부터 브라우저에서 삐그덕거리기 시작함
+      Virtualized list 사용하나, 현재 적용하기 어려우므로 infinite scolloing부터 -->
       <PostCard v-for="p in mainPosts" :key="p.id" :post="p" />
     </div>
   </v-container>

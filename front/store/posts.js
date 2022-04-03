@@ -3,10 +3,19 @@
 export const state = () => ({
     // index.js가 아닌 모듈이기 때문에 this.$store.state.posts.mainPosts
     mainPosts: [], 
+
+    /* infinite scrolling */
+    // 처음부터 10개를 불러오고 시작할 것
+    // 더 불러올 게시물이 존재하는지?에 대한 state
+    hasMorePost: true, // 얘가 false 일 때, 더이상 server에 요청하지 않음
+    // 계속 요청하면 front-end 개발자가 아니라, server를 공격하는 해커임
 });
 
 // module의 mutation 사용법
 // this.$store.commit('posts/bye')
+
+const limit = 10; // 한 번에 불러올 게시글의 개수
+
 export const mutations = {
     // 동기적으로 변경
     addMainPost(state, payload) {
@@ -23,6 +32,24 @@ export const mutations = {
         const index = state.mainPosts.findIndex(v => v.id === payload.postId)
         // 해당 게시글의 Comments에 댓글 추가
         state.mainPosts[index].Comments.unshift(payload);
+    },
+    loadPosts(state) {
+        // Array(limit).fill() 길이가 limit(10)인 빈 배열을 만드는 방법
+        const fakePosts = Array(limit).fill().map(v => ({ // map 함수로 Dummy data를 만듦
+            id: Math.random().toString(),
+            User: {
+                id: 1,
+                nickname: "제로초",
+            },
+            content: `Hello, infinite scrolling~ ${Math.random()}`,
+            Comments: [],
+            Images: [],
+        }));
+        // 위에서 만든 가짜 데이터 10개씩을 기존의 mainPosts 배열과 concat으로 합침
+        state.mainPosts = state.mainPosts.concat(fakePosts);
+        // fakePosts의 길이(가짜 데이터의 개수)가 limit(10)과 같으면 더 불러올 게시글이 있다(hasMorePost = true)
+        // limit과 같지 않으면 더 불러올 게시글이 없다(hasMorePost = false)
+        state.hasMorePost = fakePosts.length === limit;
     }
 };
 
@@ -40,5 +67,11 @@ export const actions = {
     },
     addComment({ commit }, payload) {
         commit('addComment', payload);
+    },
+    // 더 불러오기 위한
+    loadPosts({ commit, state }, payload) {
+        if (state.hasMorePost) {
+            commit('loadPosts');
+        }
     }
 }
