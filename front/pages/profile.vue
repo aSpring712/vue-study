@@ -15,7 +15,7 @@
               :rules="nicknameRules"
               required
             />
-            <v-btn color="blue" type="submit" :disabled=" !valid ">
+            <v-btn dark color="blue" type="submit" :disabled=" !valid ">
               수정
             </v-btn>
           </v-form>
@@ -28,13 +28,20 @@
           -> 같은 컴포넌트를 쓰면서 다른 사용자 리스트를 넘겨줄 수 있게 됨 -->
           <!-- <FollowList v-for="user in followings" :key="user.id" :follow="user" list-type="following" /> -->
           <FollowList :users="followingList" :remove="removeFollowing" />
+          <!-- 페이징 -->
+          <v-btn v-if="hasMoreFollowing" @click="loadMoreFollowings" dark color="blue" style="width: 100%">더보기</v-btn>
         </v-container>
       </v-card>
       <v-card style="margin-bottom:20px;">
         <v-container>
           <v-subheader>팔로워</v-subheader>
           <!-- <FollowList v-for="user in followers" :key="user.id" :follow="user" list-type="follower" /> -->
+
+          <!-- profile.vue이지만 실제로 렌더링은 followList.vue에서 하는데, 따로 이어줄 필요없이 vuex store만 바꿔주면 됨
+            -> 관심사 분리 : 데이터만 바꾸면 화면에 반영되므로 의존 관계도 줄고 에러도 준다 -->
           <FollowList :users="followerList" :remove="removeFollower" />
+          <!-- 페이징 -->
+          <v-btn v-if="hasMoreFollower" @click="loadMoreFollowers" dark color="blue" style="width: 100%">더보기</v-btn>
         </v-container>
       </v-card>
     </v-container>
@@ -71,9 +78,21 @@
           },
           me() {
             return this.$store.state.users.me
-          }
+          },
+          // 이렇게 쓰기 귀찮으면 mapState
+          hasMoreFollowing() {
+            return this.$store.state.users.hasMoreFollowing;
+          },
+          hasMoreFollower() {
+            return this.$store.state.users.hasMoreFollower;
+          },
         },
         watch: {},
+        fetch({ store }) { // context를 구조분해
+          // 데이터 2개를 미리 준비
+          store.dispatch('users/loadFollowers');
+          store.dispatch('users/loadFollowings');
+        },
         methods: {
           onChangeNickname() {
             this.$store.dispatch('users/chageNickname', {
@@ -95,6 +114,14 @@
           removeFollower(id) {
             this.$store.dispatch('users/removeFollower', {id})
           },
+          // 더보기 -> 실무에서는 이 방식을 사용하지 않음 -> 더보기를 누르는 사이에 데이터가 추가/삭제될 수 있으므로
+          // 따라서 limit 방식이 아닌, lastId 방식을 사용함
+          loadMoreFollowings() {
+            this.$store.dispatch('users/loadFollowings');
+          },
+          loadMoreFollowers() {
+            this.$store.dispatch('users/loadFollowers');
+          }
         },
     }
 </script>

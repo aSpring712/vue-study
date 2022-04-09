@@ -8,31 +8,40 @@ export const state = () => ({
     // 사용자 정보에 대한 객체가 담겨있으면 로그인한 상태
     // -> 이런 상태를 전역적으로 관리하기 위해 Vuex를 사용
 
-    // 숙제 - 아래 list를 front에 바인딩 후 - 버튼 클릭 시 제거하는 것까지 구현하기
     followerList: [
-        {
-            id: 1,
-            nickname: 'spring',
-            email: 'spring@spring.com'
-        }, {
-            id: 2,
-            nickname: 'ronnie',
-            email: 'ronnie@ronnie.com',
-        }, {id:3,
-            nickname: 'mango',
-            email: 'mango@mango.com',
-        }
+        // Dummy Data 비움 -> fetch할 것
+        // {
+        //     id: 1,
+        //     nickname: 'spring',
+        //     email: 'spring@spring.com'
+        // }, {
+        //     id: 2,
+        //     nickname: 'ronnie',
+        //     email: 'ronnie@ronnie.com',
+        // }, {id:3,
+        //     nickname: 'mango',
+        //     email: 'mango@mango.com',
+        // }
     ],
-    followingList: [{
-            id: 1, nickname: 'happy', email: 'happy@happy.com'
-        },
-        {
-            id: 2, nickname: 'sunday', email: 'sunday@sunday.com'
-        },
-        {
-            id: 3, nickname: 'moon', email: 'moon@moon.com'
-        }],
+    followingList: [
+        // {
+        //     id: 1, nickname: 'happy', email: 'happy@happy.com'
+        // },
+        // {
+        //     id: 2, nickname: 'sunday', email: 'sunday@sunday.com'
+        // },
+        // {
+        //     id: 3, nickname: 'moon', email: 'moon@moon.com'
+        // }
+    ],
+    hasMoreFollower: true,
+    hasMoreFollowing: true,
 });
+
+// For simulation
+const totalFollowers = 8;
+const totalFollowings = 6;
+const limit = 3;
 
 // state 외 나머지는 객체
 export const mutations = { // 단순 동기적 작업 처리
@@ -57,6 +66,24 @@ export const mutations = { // 단순 동기적 작업 처리
     removeFollowing(state, payload) {
         const index = state.followingList.findIndex(v => v.id === payload.id);
         state.followingList.splice(index, 1);
+    },
+    loadFollowings(state) {
+        const diff = totalFollowings - state.followingList.length;
+        const fakeUsers = Array(diff > limit ? limit : diff).fill().map(v => ({
+            id: Math.random().toString(),
+            nickname: Math.floor(Math.random() * 1000),
+        }));
+        state.followingList = state.followingList.concat(fakeUsers);
+        state.hasMoreFollowing = fakeUsers.length === limit;
+    },
+    loadFollowers(state) {
+        const diff = totalFollowers - state.followerList.length;
+        const fakeUsers = Array(diff > limit ? limit : diff).fill().map(v => ({
+            id: Math.random().toString(),
+            nickname: Math.floor(Math.random() * 1000),
+        }));
+        state.followerList = state.followerList.concat(fakeUsers);
+        state.hasMoreFollower = fakeUsers.length === limit;
     },
     // unfollow(state, payload) {
     //     const index = state.followingList.findIndex( v => v.email === payload.email)
@@ -112,6 +139,18 @@ export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 
     },
     removeFollower({ commit }, payload) {
         commit('removeFollower', payload);
+    },
+    // 더보기
+    loadFollowers({ commit, state }, payload) {
+        // 더보기 할 팔로워가 있을 때
+        if (state.hasMoreFollower) {
+            commit('loadFollowers');   
+        }
+    },
+    loadFollowings({ commit, state }, payload) {
+        if (state.hasMoreFollowing) {
+            commit('loadFollowings');
+        }
     },
 
     // unfollow({ commit }, payload) {
