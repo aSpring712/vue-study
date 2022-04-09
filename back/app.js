@@ -1,8 +1,12 @@
 // front -> back으로 요청을 보내면 위에서부터 아래로 미들웨어를 훑으며 실행 됨
 
 const express = require('express');
-
+const db = require('./models'); // models/index.js에서 module.exports = db; -> 그 db를 불러온 것, 그 안에 User가 있음
 const app = express();
+
+
+// 서버 시작 시 app.js가 시작되면서 db, sequelize.sync()까지 같이 실행되도록
+db.sequelize.sync(); // db 시작
 
 // express는 body로 Json data를 받지못하므로 써주어야 함
 app.use(express.json()); // 요청으로 온 json data를 parsing(해석)해서 req.body에 넣어줌
@@ -18,10 +22,19 @@ app.get('/', (req, res) => {
 });
 
 // 회원가입
-app.post('/user', (req, res) => {
-    req.body.email;
-    req.body.password;
-    req.body.nickname;
+app.post('/user', async (req, res, next) => { // promise이기 때문에 async await를 붙여주고 -> try catch로 감싸주어야 함
+    try {
+        const newUser = await db.User.create({
+            email: req.body.email, 
+            password: req.body.password, 
+            nickname: req.body.nickname,
+        });    
+        // 200 -> 성공, 201 -> 성공적으로 생성됨 (HTTP STATUS CODE)
+        res.status(201).json(newUser); // send는 문자열로 응답할 때, 응답 body에 json으로 응답 할 겨우 .json()
+    } catch(err) {
+        console.log(err);
+        next(err); // next는 라우터에서 보통 err를 넘긴다고 보면 됨
+    }
 });
 
 app.listen(3085, () => {
