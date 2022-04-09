@@ -20,6 +20,7 @@
   <!-- </v-list> -->
 
   <v-list>
+    <div>{{abc}}</div>
     <!-- v-list-tile이 vue2 부터 사라짐 -->
     <v-col v-for="user in users" :key="user.id" cols="12" md="4" style="display: inline-block;">
       <!-- 12를 4로 나눈 3명씩 배치가 됨 -->
@@ -36,7 +37,7 @@
       </v-list-item>
     </v-col>
   </v-list>
-  
+
 </template>
 
 <script>
@@ -49,6 +50,9 @@ export default {
     remove: {
       type: Function,
       required: true,
+    },
+    abc: {
+      type: Array,
     }
     // follow: {
     //   type: Object,

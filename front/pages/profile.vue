@@ -39,7 +39,7 @@
 
           <!-- profile.vue이지만 실제로 렌더링은 followList.vue에서 하는데, 따로 이어줄 필요없이 vuex store만 바꿔주면 됨
             -> 관심사 분리 : 데이터만 바꾸면 화면에 반영되므로 의존 관계도 줄고 에러도 준다 -->
-          <FollowList :users="followerList" :remove="removeFollower" />
+          <FollowList :abc="abc" :users="followerList" :remove="removeFollower" />
           <!-- 페이징 -->
           <v-btn v-if="hasMoreFollower" @click="loadMoreFollowers" dark color="blue" style="width: 100%">더보기</v-btn>
         </v-container>
@@ -58,6 +58,9 @@
         middleware: 'authenticated',
         data() {
             return {
+                // abc: 'a',
+                abc: [1, 2, 3],
+
                 valid: false,
                 nickname: '',
                 nicknameRules: [v => !!v || '닉네임을 입력하세요.'],
@@ -68,6 +71,15 @@
             return {
                 title: '프로필',
             }
+        },
+        mounted() {
+          // 부모 페이지에서 자식 컴포넌트로 props를 통해 넘겨주는 값 abc를 mounted 때 변경하는 경우, 자식 컴포넌트에서는 적용되지 않는 이유?
+          // this.abc = 'b'; // -> 자식 컴포넌트에 {{ abc }}에 b가 잘 찍힘
+
+          // 객체의 속성 변경 또는 Array인 경우 index로 접근할 경우 안될 수도 있음 -> 자식 컴포넌트에는 변경 전 값 [1, 2, 3]이 찍힘 -> 자식 컴포넌트에서 updated가 안불려질 수 있음
+          // this.abc[0] = '5' -> Not working
+          // 이 경우 -> this.$set()을 써주어야 함
+          this.$set(this.abc, '0', '5')
         },
         computed: {
           followerList() {
