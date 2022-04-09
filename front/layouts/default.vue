@@ -14,12 +14,16 @@
         <!-- 빈 공간 -->
         <v-spacer />
         <v-toolbar-items>
-          <v-text-field
-            label="검색"
-            hide-details
-            prepend-icon="mdi-magnify"
-            :style="{display: 'flex', alignItems: 'center'}"
-          />
+          <v-form @submit.prevent="onSearchHashtag">
+          <div :style="{ display: 'flex', height: '100%', alignItems: 'center' }">
+              <v-text-field
+                v-model="hashtag"
+                label="검색"
+                hide-details
+                prepend-icon="mdi-magnify"
+              />
+            </div>
+          </v-form>
           <v-btn
             
             text
@@ -80,29 +84,32 @@ import LoginForm from '~/components/LoginForm.vue';
 
 export default{
   components: { LoginForm },
-// 중복 -> nuxt.config.js에서 처리 가능
-//    head() {
-//        return {
-//            title: 'NodeBird',
-//        }
-//    }
-    computed: {
-      me() {
-        return this.$store.state.users.me;
-      }
-        // name() {
-        //     return this.$store.state.posts.name;
-        // }
-    },
-    methods: {
-        // onChangeName() {
-        //     // vuex store 모듈 사용 -> posts 모듈의 bye라는 mutation 사용
-        //     this.$store.commit('posts/BYE')
-        // },
+  data() {
+    return {
+      hashtag: '',
     }
+  },
+  computed: {
+    me() {
+      return this.$store.state.users.me;
+    },
+  },
+  methods: {
+    onSearchHashtag() {
+      // 페이지 넘어가고
+      this.$router.push({
+        path: `/hashtag/${this.hashtag}`,
+      });
+      // 검색어 비워줌
+      this.hashtag = '';
+    },
+  }
 };
 </script>
 
-<style>
-
+<style scoped>
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 </style>
