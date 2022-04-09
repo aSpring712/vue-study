@@ -103,9 +103,23 @@ export const mutations = { // 단순 동기적 작업 처리
 // 회원가입, 로그인 등은 ajax 요청을 통해 서버와 요청 및 응답을 주고받아야 하는데, mutations에서는 불가능
 // actions는 보다 고차원적 개념으로, 동기적 작업 뿐만 아니라 비동기적이 작업 가능
 export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 처리
-    signUp({ commit }, payload) { // ( context, payload ) -> context는 객체
+    signUp({ commit, state }, payload) { // ( context, payload ) -> context는 객체
         // console.log(context)로 구조를 확인해 볼 수 있음
         // 서버에 회원가입 요청을 보내는 부분
+
+        // console.log(this.$axios); // axios -> backend 서버로 요청을 보내주는 라이브러리
+
+        // this.$axios.get('/') // -> front에서는 이렇게 요청을 보내고, back에서는 app.get('/')로 받음
+
+        // 사용자를 생성하다 -> 앞을 동작, 뒤를 장원(대상)으로 두는 주소체계 : REST API
+        this.$axios.post('/user', {
+            email: payload.email,
+            nickname: payload.nickname,
+            password: payload.password,
+        }) // 이렇게 데이터를 body에 담아서 서버로 보냄
+
+        
+
         // 서버에서 응답이 오면, state 변경 및 로그인 처리
         commit('setMe', payload);
         // context 자리에 { commit, state } 해서

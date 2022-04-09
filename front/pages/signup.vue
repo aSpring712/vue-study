@@ -144,7 +144,8 @@
                     // action이 비동기이기 때문에 then과 catch를 써주어야 실행순서가 보장됨
                     this.$store.dispatch('users/signUp', {
                         nickname: this.nickname,
-                        email: this.email
+                        email: this.email,
+                        password: this.password
                       })
                         .then(() => { // .then()으로 실행 순서 보장 -> 비동기 promise가 완료된 후 아래 실행
                           this.$router.push({
