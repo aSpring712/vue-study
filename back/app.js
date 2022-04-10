@@ -3,18 +3,39 @@
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const passport = require('passport'); // passport 원본 미들웨어도 연결해줘야 함
+const session = require('express-session');
+const cookie = require('cookie-parser');
+
+const morgan = require('morgan');
 
 const db = require('./models'); // models/index.js에서 module.exports = db; -> 그 db를 불러온 것, 그 안에 User가 있음
+// 내가 만든 모듈과 실제 모듈(passport)이 헷갈릴 수 있음 -> 내가 함수를 모듈로 만든 파일을 가져오는 것이므로 passportConfig로 이름 지정
+const passportConfig = require('./passport');
 const app = express();
 
 
 // 서버 시작 시 app.js가 시작되면서 db, sequelize.sync()까지 같이 실행되도록
-db.sequelize.sync({ force: true }); // db 시작
+// db.sequelize.sync({ force: true }); // db 시작
+db.sequelize.sync(); // db 시작
+passportConfig(); // 서버가 시작될 때, 시퀄라이즈도 동작시키고 passport도 연결
 
+// 요청이 왔을 때, 대해 console에 기록해 줌
+app.use(morgan('dev')); // 보통 맨 위에다 써줌
 app.use(cors('http://localhost:3000')); // () 이렇게 하면 모든 요청을 다 허용하므로 실무에서는 절대 이렇게하면 안됨 -> 정확하게 허용할 프론트 주소 적어주기
 // express는 body로 Json data를 받지못하므로 써주어야 함
 app.use(express.json()); // 요청으로 온 json data를 parsing(해석)해서 req.body에 넣어줌
-app.use(express.urlencoded({extended: false})); // form에서 action을 통해 전송할 때, 그 데이터를 해석해서 req.body에 넣어줌
+app.use(express.urlencoded({ extended: false })); // form에서 action을 통해 전송할 때, 그 데이터를 해석해서 req.body에 넣어줌
+app.use(cookie('cookiesecret'));
+// passport를 사용하기 위해 미들웨어 연결
+// passport의 session 사용하기 위해 express session 설치 필요
+app.use(session({
+    resave: false,
+    saveUninitialized: false,
+    secret: 'cookiesecret', // 쿠키는 암호화 할 수 있고, 그 암호화 한 것을 해독할 수 있는 key가 있음
+})); 
+app.use(passport.initialize()); // 요청(로그인, 로그아웃 기능 만들어 줌)
+app.use(passport.session()); // 사용자 로그인 정보를 기록할 수 있는 session을 만들어 줌 -> 이걸 사용하려면 express session 설치 필요 ( app.use(session()); )
 
 // app.use() --> req, res를 조작하는 express middleware (get, post도 마찬가지)
 
@@ -68,6 +89,18 @@ app.post('/user', async (req, res, next) => { // promise이기 때문에 async a
         // -> 실무에서는 에러가 나면 안됨.
     }
 });
+
+// 로그인 -> 세션
+const user = {
+
+};
+
+app.post('/user/login', (req, res) => {
+    req.body.email;
+    req.body.password;
+    // 로그인 시 세션을 이렇게 지정해도 되지만 실무에서는 사용하지 않음 -> 보통 passport 모듈 사용함
+    // user[user.id] = {};
+})
 
 app.listen(3085, () => {
     console.log(`백엔드 서버 ${3085}번 포트에서 작동중.`);
