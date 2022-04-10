@@ -9,7 +9,7 @@ const app = express();
 
 
 // 서버 시작 시 app.js가 시작되면서 db, sequelize.sync()까지 같이 실행되도록
-db.sequelize.sync(); // db 시작
+db.sequelize.sync({ force: true }); // db 시작
 
 app.use(cors('http://localhost:3000')); // () 이렇게 하면 모든 요청을 다 허용하므로 실무에서는 절대 이렇게하면 안됨 -> 정확하게 허용할 프론트 주소 적어주기
 // express는 body로 Json data를 받지못하므로 써주어야 함
