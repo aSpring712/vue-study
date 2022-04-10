@@ -24,8 +24,8 @@ passportConfig(); // 서버가 시작될 때, 시퀄라이즈도 동작시키고
 app.use(morgan('dev')); // 보통 맨 위에다 써줌
 app.use(cors('http://localhost:3000')); // () 이렇게 하면 모든 요청을 다 허용하므로 실무에서는 절대 이렇게하면 안됨 -> 정확하게 허용할 프론트 주소 적어주기
 // express는 body로 Json data를 받지못하므로 써주어야 함
-app.use(express.json()); // 요청으로 온 json data를 parsing(해석)해서 req.body에 넣어줌
-app.use(express.urlencoded({ extended: false })); // form에서 action을 통해 전송할 때, 그 데이터를 해석해서 req.body에 넣어줌
+app.use(express.json()); // 요청으로 온 json data를 parsing(해석)해서 req.body에 넣어줌 // * req.body 만들어 줌
+app.use(express.urlencoded({ extended: false })); // form에서 action을 통해 전송할 때, 그 데이터를 해석해서 req.body에 넣어줌 // * req.body 만들어 줌
 app.use(cookie('cookiesecret'));
 // passport를 사용하기 위해 미들웨어 연결
 // passport의 session 사용하기 위해 express session 설치 필요
@@ -52,8 +52,10 @@ app.post('/user', async (req, res, next) => { // promise이기 때문에 async a
         const hash = await bcrypt.hash(req.body.password, 12); // (원문, salt -> 높일수록 좋으나, 복잡하게 암호화하기 때문에 느려질 수 있음)
 
         // email 중복 방지를 위한 코드
-        const exUser = await db.User.findOne({
-            email: req.body.email,
+        const exUser = await db.User.findOne({ // findOne 시 검색할 때, 조건은 반드시 where 안에 적어주어야 함
+            where: {
+                email: req.body.email,
+            },
         })
         if (exUser) { // 이미 해당 이메일로 가입된 회원 존재 시 -> back에서 brower에 거절 코드 보내야 함
             // 400대 -> 거절
@@ -90,17 +92,72 @@ app.post('/user', async (req, res, next) => { // promise이기 때문에 async a
     }
 });
 
-// 로그인 -> 세션
+// 로그인 -> 세션 -> hip이라는 곳에 메모리로 존재
 const user = {
+    // 'aaaaaaaaaa': { // 이 key를 cookie에 넣음
+    //     nickname: '제로초',
+    //     email: 'zerocho@naver.com',
+    // },
+    // 'asdfasdfsa': {
+    //     nickname: '영웅',
+    //     email: 'hero@naver.com',
+    // },
 
+    // serializeUser -> id만 저장하므로
+    'aaaaaa': 1, // 이런식으로 저장되며, 알아서 cookie를 front에 내려보내 줌! -> cookie 이름 : connect.sid
+    // cookie인 connect.sid는 req.login에서 보내줌 -> body를 통해 추가적인 데이터는 passport.authenticate() 내 return res.json() 에서 보내줌
 };
 
-app.post('/user/login', (req, res) => {
-    req.body.email;
-    req.body.password;
-    // 로그인 시 세션을 이렇게 지정해도 되지만 실무에서는 사용하지 않음 -> 보통 passport 모듈 사용함
-    // user[user.id] = {};
-})
+app.post('/user/login', (req, res) => { // * 1. front에서 email, pwd를 가지고 post 요청을 보냄 -> req.body에 담김 
+    // req.body.email;
+    // req.body.password;
+    // // 로그인 시 세션을 이렇게 지정해도 되지만 실무에서는 사용하지 않음 -> 보통 passport 모듈 사용함
+
+    // /* 로그인이란? */
+    // // 1. email, password 검사 -> localStrategy 안에서 이뤄짐
+    // await db.User.findOne();
+    // // 2. 일치 시 session에 cookie와 객체 저장 (cookie를 key로 삼아 user 정보를 저장)
+    // user[cookie] = 유저정보;
+
+    // // 3. 프론트에 쿠키 내려보내주기
+
+    
+    // // 인증 성공 시 back이 해당 user의 cookie를 보내주면 front에서는 이후부터 이 cookie를 가지고 있다가
+    // // 서버로 요청 시 header에 cookie를 함께 담아 보내고, 백에서는 이것을 꺼내서 쓸 수 있음
+
+    // // req.cookie[connect.sid] // 이 cookie가 aaaaaaaaaa면 back에서는 '아, 요청보낸 애가 제로초구나' 하고 알 수 있음
+
+    // 직접 LocalStrategy를 실행시켜 주어야 함
+    // 로그인 요청 시 LocalStrategy 실행 -> 결과가 done callback 함수로
+    // * 2. req.body에 담긴 것들을 passport localStrategy에 보냄 -> passport/local.js
+    passport.authenticate('local', (err, user, info) => { // * 6. callback 함수로 돌아옴 -> done(err, 성공, 실패)
+        // err 존재 시
+        if (err) {
+            // 콘손로 찍어주고
+            console.error(err);
+            // err 알아서 처리하게 넘겨버림
+            return next(err);
+        }
+        // 실패 시 -> { reason }
+        if (info) {
+            return res.status(401).send(info.reason); // front에서 잘못된 요청을 보냈으므로 거절
+        }
+        // 성공 시 -> 성공한 user -> exUser 데이터 넣어줌
+        // app.use(initialize()) -> req.login, req.logout 넣어줌
+
+        // * 7. 성공 시 req.login을 하는데, req.login이 세션에 사용자 정보를 저장하고, front에 cookie를 내려보내주는 함수이며, 
+        return req.login(user, async (err) => { // 세션에다 사용자 정보 저장 (어떻게? serializeUser)
+            // req.login 할 때, serializeUser가 실행됨
+            if (err) {
+                console.error(err);
+                return next(err);
+            }
+            // front로 사용자 정보 넘겨주기
+            // * 8. body에 data까지 같이 내려다 보내줌
+            return res.json(user); // cookie를 header를 통해 내려주면서 body 부분에 추가적인 내용을 내려보내줄 수 있음
+        }); 
+    })(req, res, next);
+});
 
 app.listen(3085, () => {
     console.log(`백엔드 서버 ${3085}번 포트에서 작동중.`);
