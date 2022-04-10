@@ -112,7 +112,8 @@ export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 
         // this.$axios.get('/') // -> front에서는 이렇게 요청을 보내고, back에서는 app.get('/')로 받음
 
         // 사용자를 생성하다 -> 앞을 동작, 뒤를 장원(대상)으로 두는 주소체계 : REST API
-        this.$axios.post('/user', {
+        // this.$axios.post('/user', { // 이렇게만 해주면, front server에 요청을 보내게 됨
+        this.$axios.post('http://localhost:3085/user', { 
             email: payload.email,
             nickname: payload.nickname,
             password: payload.password,
