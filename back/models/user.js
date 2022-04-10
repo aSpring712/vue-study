@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => { // sequelize와 DataTypes를 매개
             // 더 상세하게 정의
             type: DataTypes.STRING(40), // 문자열 40자 이내로 정의
             allowNull: false, // 필수
+            unique: true, // 중복 금지
         },
         nickname: {
             type: DataTypes.STRING(20),

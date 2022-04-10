@@ -29,6 +29,29 @@ app.get('/', (req, res) => {
 app.post('/user', async (req, res, next) => { // promise이기 때문에 async await를 붙여주고 -> try catch로 감싸주어야 함
     try {
         const hash = await bcrypt.hash(req.body.password, 12); // (원문, salt -> 높일수록 좋으나, 복잡하게 암호화하기 때문에 느려질 수 있음)
+
+        // email 중복 방지를 위한 코드
+        const exUser = await db.User.findOne({
+            email: req.body.email,
+        })
+        if (exUser) { // 이미 해당 이메일로 가입된 회원 존재 시 -> back에서 brower에 거절 코드 보내야 함
+            // 400대 -> 거절
+            // 400 -> 클라이언트 쪽에서 잘못된 요청을 보냈다
+            // 401 -> 권한 없음
+            // 403 -> 금지
+            // 404 -> 페이지 없음
+            // return res.status(403).send('이미 회원가입되어있습니다.'); // 애매하면 403, 401, 400
+
+            // 여기서 return 하지 않고 그냥 res 하면 요청 한번에 두번 이상의 응답을 보낼 수 없다는 에러 뜨므로 반드시 return !
+            // 응답 보낼 때는 습관적으로 return 붙여주기
+            return res.status(403).json({ // -> 여기서의 에러 코드는 http에서 정한 코드대로(http status code가 있는데도 아래에서 다시 에러코드를 정의해주는 이유 
+                // -> 금지는 금지인데 뭐가 금지인지 모르니까)
+                errorCode: 1, // error code는 마음대로 -> front와 협의해서
+                messege: '이미 회원가입되어있습니다.',
+            }); 
+            // 이렇게 해도 back단에서 중복을 잡아내지 못할 수도 있음 -> db단에서 걸러내야 함 -> unique: true
+        }
+
         const newUser = await db.User.create({
             email: req.body.email, 
             // password: req.body.password, 
@@ -36,10 +59,13 @@ app.post('/user', async (req, res, next) => { // promise이기 때문에 async a
             nickname: req.body.nickname,
         });    
         // 200 -> 성공, 201 -> 성공적으로 생성됨 (HTTP STATUS CODE)
-        res.status(201).json(newUser); // send는 문자열로 응답할 때, 응답 body에 json으로 응답 할 겨우 .json()
+        return res.status(201).json(newUser); // send는 문자열로 응답할 때, 응답 body에 json으로 응답 할 겨우 .json()
     } catch(err) {
         console.log(err);
-        next(err); // next는 라우터에서 보통 err를 넘긴다고 보면 됨
+        return next(err); // next는 라우터에서 보통 err를 넘긴다고 보면 됨
+        // 기본적으로 nuxt에서 알아서 에러를 처리해줌
+        // 500번대 커스터마이징 해서 res 보내줘도 됨
+        // -> 실무에서는 에러가 나면 안됨.
     }
 });
 
