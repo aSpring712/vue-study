@@ -20,6 +20,9 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 
 // 순서 중요
 db.User = require('./user')(sequelize, Sequelize);
+db.Comment = require('./comment')(sequelize, Sequelize);
+db.Image = require('./image')(sequelize, Sequelize);
+db.Post = require('./post')(sequelize, Sequelize);
 
 // fs
 //   .readdirSync(__dirname)
@@ -31,6 +34,7 @@ db.User = require('./user')(sequelize, Sequelize);
 //     db[model.name] = model;
 //   });
 
+// ! Comment.associate = (db) --> 여기서의 db를 아래에서 넣어줌
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);

@@ -15,7 +15,7 @@ module.exports = () => {
   // ! -> 모든 요청 마다 최소 1번씩은 db 요청이 들어감 -> 문제가 될 수 있기 때문에 나중에는 이 부분을 캐싱을 통해 극복할 예정
   // ! backend는 db요청을 최소화하는 것이 숙제
 
-  // ! 문제 2. 매번 호출되기 때문에 Redis에서 찾아도 되고, 
+  // ! 문제 2. 매번 호출되기 때문에 보조 db Redis에서 찾는 방법으로 main db인 mySQL의 부담을 줄일 수 있음
   passport.deserializeUser( async (id, done) => { // memory 절약을 위해 id만 저장해 둔것을 가지고, db에서 사용자의 data를 조회함
     try {
       const user = await db.User.findOne({ where: { id } });

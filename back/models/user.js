@@ -23,8 +23,12 @@ module.exports = (sequelize, DataTypes) => { // sequelize와 DataTypes를 매개
     });
 
     // 이렇게 하면, 자동으로 고유 id, createdAt, updatedAt을 생성해 줌
-    User.associate = (db) => {
 
+    // 모델간 관계를 적어주는 부분
+    User.associate = (db) => {
+        // 1명의 사용자 -> 여러개의 게시글 작성 가능 ( 1 : N )
+        db.User.hasMany(db.Post); // 이렇게 적어주고, post.js에서는 db.Post.belongsTo(db.User); 추가 필요
+        db.User.hasMany(db.Comment); // * hasMany는 따로 생성해주는 column은 없으나, 이 유저가 쓴 게시글 다 불러와 또는 이 게시글 쓴 사람 알아와 등 가능
     };
     return User;
 };
