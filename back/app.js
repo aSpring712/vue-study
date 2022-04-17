@@ -124,20 +124,20 @@ app.post('/user', async (req, res, next) => { // promise이기 때문에 async a
 });
 
 // 로그인 -> 세션 -> hip이라는 곳에 메모리로 존재
-const user = {
-    // 'aaaaaaaaaa': { // 이 key를 cookie에 넣음
-    //     nickname: '제로초',
-    //     email: 'zerocho@naver.com',
-    // },
-    // 'asdfasdfsa': {
-    //     nickname: '영웅',
-    //     email: 'hero@naver.com',
-    // },
+// const user = {
+//     // 'aaaaaaaaaa': { // 이 key를 cookie에 넣음
+//     //     nickname: '제로초',
+//     //     email: 'zerocho@naver.com',
+//     // },
+//     // 'asdfasdfsa': {
+//     //     nickname: '영웅',
+//     //     email: 'hero@naver.com',
+//     // },
 
-    // serializeUser -> id만 저장하므로
-    'aaaaaa': 1, // 이런식으로 저장되며, 알아서 cookie를 front에 내려보내 줌! -> cookie 이름 : connect.sid
-    // cookie인 connect.sid는 req.login에서 보내줌 -> body를 통해 추가적인 데이터는 passport.authenticate() 내 return res.json() 에서 보내줌
-};
+//     // serializeUser -> id만 저장하므로
+//     'aaaaaa': 1, // 이런식으로 저장되며, 알아서 cookie를 front에 내려보내 줌! -> cookie 이름 : connect.sid
+//     // cookie인 connect.sid는 req.login에서 보내줌 -> body를 통해 추가적인 데이터는 passport.authenticate() 내 return res.json() 에서 보내줌
+// };
 
 app.post('/user/login', (req, res, next) => { // * 1. front에서 email, pwd를 가지고 post 요청을 보냄 -> req.body에 담김 
     // req.body.email;
@@ -195,6 +195,14 @@ app.post('/post', (req, res) => {
     // if(req.user) 또는
     if (req.isAuthenticated()) { // 이것으로 로그인을 했는지, 아닌지를 검사할 수 있음
         
+    }
+})
+
+app.post('/user/logout', (req, res) => {
+    if (req.isAuthenticated()) { 
+        req.logout();
+        req.session.destroy(); // 세션까지 모두 없애주기 (선택사항 -> session에 사용자 정보 외에 다른 정보가 들어있을 수 있으므로)
+        return res.status(200).send('로그아웃 되었습니다.');
     }
 })
 
