@@ -113,16 +113,22 @@ export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 
 
         // 사용자를 생성하다 -> 앞을 동작, 뒤를 장원(대상)으로 두는 주소체계 : REST API
         // this.$axios.post('/user', { // 이렇게만 해주면, front server에 요청을 보내게 됨
-        this.$axios.post('http://localhost:3085/user', { 
+        this.$axios.post('http://localhost:3085/user', { // 이렇게 데이터를 body에 담아서 서버로 보냄
             email: payload.email,
             nickname: payload.nickname,
             password: payload.password,
-        }) // 이렇게 데이터를 body에 담아서 서버로 보냄
+        }).then((data) => {
+            // 요청이 비동기이기 때문에 Promise(.then)로 처리하거나, async await로 처리하거나
+            console.log(data);
+            commit('setMe', payload);
+        }).catch((err) => {
+            console.log(err);
+        });
 
         
 
         // 서버에서 응답이 오면, state 변경 및 로그인 처리
-        commit('setMe', payload);
+        // commit('setMe', payload);
         // context 자리에 { commit, state } 해서
         // state.me = payload // 이렇게 써줄 수도 있지만 보통 state 변경하는 부분은 동기적으로 변경하는 것이므로 mutations로 만들어주는 것이 좋음
         // -> actions와 mutations를 완전히 분리
@@ -133,7 +139,17 @@ export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 
         // dispatch : actions 실행
         // rootState, rootGetters : index 모듈의 state와 getters
         
-        commit('setMe', payload);
+        this.$axios.post('http://localhost:3085/user/login', {
+            email: payload.email,
+            password: payload.password,
+        }, {
+            withCredentials: true, // 세번재 option을 다음과 같이 주면 다른 서버로 요청을 보낼 때, front쪽에 cookie를 내려보낼 수 있음
+        }).then((data) => {
+            console.log(data);
+            commit('setMe', payload);
+        }).catch((err) => {
+            console.log(err);
+        });
     },
     logOut({ commit }, payload) {
         commit('setMe', null);
