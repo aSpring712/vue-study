@@ -20,9 +20,11 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 
 // 순서 중요
 db.User = require('./user')(sequelize, Sequelize);
-db.Comment = require('./comment')(sequelize, Sequelize);
-db.Image = require('./image')(sequelize, Sequelize);
 db.Post = require('./post')(sequelize, Sequelize);
+db.Comment = require('./comment')(sequelize, Sequelize);
+db.Hashtag = require('./hashtag')(sequelize, Sequelize);
+db.Image = require('./image')(sequelize, Sequelize);
+
 
 // fs
 //   .readdirSync(__dirname)

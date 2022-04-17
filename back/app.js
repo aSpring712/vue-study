@@ -17,7 +17,7 @@ const app = express();
 
 
 // 서버 시작 시 app.js가 시작되면서 db, sequelize.sync()까지 같이 실행되도록
-// db.sequelize.sync({ force: true }); // db 시작
+// ! db.sequelize.sync({ force: true }); // db 시작
 db.sequelize.sync(); // db 시작
 passportConfig(); // 서버가 시작될 때, 시퀄라이즈도 동작시키고 passport도 연결
 

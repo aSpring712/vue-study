@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
 
     db.Post.hasMany(db.Comment); // 게시글을 통해 댓글을 가져옴
     db.Post.hasMany(db.Image);
+    db.Post.belongsToMany(db.Hashtag, {through: 'PostHashtag'}); // N:M 관계
   };
 
   return Post;

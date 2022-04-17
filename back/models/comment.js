@@ -1,12 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
     content: {
-      type: DataTypes.Text,
+      type: DataTypes.TEXT,
       allowNull: false,
     }
   }, {
     charset: 'utf8mb4',
-    collate: 'utf8_general_ci',
+    collate: 'utf8mb4_general_ci',
   });
 
   Comment.associate = (db) => { // ! 여기서의 db는 models/index.js에서 넣어준 db
