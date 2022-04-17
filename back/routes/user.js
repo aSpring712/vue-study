@@ -1,4 +1,5 @@
 const express = require('express');
+const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 // router 분리하면서 항상 그 파일에서 사용하는 모듈들 require 필요
 const bcrypt = require('bcrypt');
 const passport = require('passport');
@@ -9,7 +10,7 @@ const router = express.Router();
 
 /* 회원가입  */
 // * app.post -> router.post로 변경 && /user 부분 없애기
-router.post('/', async (req, res, next) => {
+router.post('/', isNotLoggedIn, async (req, res, next) => {
   try {
         // * 비밀번호 암호화
         const hash = await bcrypt.hash(req.body.password, 12);
@@ -63,7 +64,7 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-router.post('/login', (req, res, next) => { // app.use('/user', userRouter) -> 의 주소와 합쳐져 실제 주소 : /user/login
+router.post('/login', isNotLoggedIn, (req, res, next) => { // app.use('/user', userRouter) -> 의 주소와 합쳐져 실제 주소 : /user/login
     passport.authenticate('local', (err, user, info) => {
         // err 존재
         if (err) {
@@ -88,7 +89,7 @@ router.post('/login', (req, res, next) => { // app.use('/user', userRouter) -> �
 });
 
 // 로그아웃
-router.post('/logout', (req, res) => {
+router.post('/logout', isLoggedIn, (req, res) => {
     if (req.isAuthenticated()) { 
         req.logout(); // 필수
         req.session.destroy(); // 선택 : 세션까지 모두 없애주기 (session에 사용자 정보 외에 다른 정보가 들어있을 수 있으므로)

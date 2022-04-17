@@ -13,6 +13,7 @@ const db = require('./models'); // models/index.js에서 module.exports = db; ->
 // 내가 만든 모듈과 실제 모듈(passport)이 헷갈릴 수 있음 -> 내가 함수를 모듈로 만든 파일을 가져오는 것이므로 passportConfig로 이름 지정
 const passportConfig = require('./passport');
 const userRouter = require('./routes/user'); // * router 분리를 위한 연결
+const postRouter = require('./routes/post');
 const app = express();
 
 
@@ -58,6 +59,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/user', userRouter); // * router 분리를 위한 연결
+app.use('/post', postRouter);
 
 // // 회원가입
 // app.post('/user', async (req, res, next) => { // promise이기 때문에 async await를 붙여주고 -> try catch로 감싸주어야 함
@@ -195,12 +197,12 @@ app.use('/user', userRouter); // * router 분리를 위한 연결
 // });
 
 // ! router 전에는 항상 deserializeUser가 실행됨
-app.post('/post', (req, res) => {
-    // if(req.user) 또는
-    if (req.isAuthenticated()) { // 이것으로 로그인을 했는지, 아닌지를 검사할 수 있음
+// app.post('/post', (req, res) => {
+//     // if(req.user) 또는
+//     if (req.isAuthenticated()) { // 이것으로 로그인을 했는지, 아닌지를 검사할 수 있음
         
-    }
-})
+//     }
+// })
 
 // app.post('/user/logout', (req, res) => {
 //     if (req.isAuthenticated()) { 
