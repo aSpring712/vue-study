@@ -117,10 +117,10 @@ export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 
             email: payload.email,
             nickname: payload.nickname,
             password: payload.password,
-        }).then((data) => {
+        }).then((res) => {
             // 요청이 비동기이기 때문에 Promise(.then)로 처리하거나, async await로 처리하거나
-            console.log(data);
-            commit('setMe', payload);
+            console.log(res.data);
+            commit('setMe', res.data);
         }).catch((err) => {
             console.log(err);
         });
@@ -144,15 +144,22 @@ export const actions = { // 복잡한 작업 처리, 특히 비동기적 작업 
             password: payload.password,
         }, {
             withCredentials: true, // 세번재 option을 다음과 같이 주면 다른 서버로 요청을 보낼 때, front쪽에 cookie를 내려보낼 수 있음
-        }).then((data) => {
-            console.log(data);
-            commit('setMe', payload);
+        }).then((res) => {
+            commit('setMe', res.data);
         }).catch((err) => {
             console.log(err);
         });
     },
     logOut({ commit }, payload) {
-        commit('setMe', null);
+        // 넘길 data가 없더라도 두번째 자리는 data 자리이므로 빈 data라도 넣어주어야 함
+        this.$axios.post('http://localhost:3085/user/logout', {}, {withCredentials: true})
+            .then((res) => {
+                commit('setMe', null);
+             })
+            .catch((err) => {
+                console.error(err);
+            }
+            );
     },
     chageNickname({ commit }, payload) {
         // server를 거치는 것이면 무조건 actions로 만들어서 서버 요청을 보낸 후, mutations로 최종적으로 변경
