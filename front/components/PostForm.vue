@@ -21,7 +21,12 @@
                 />
                 <!-- 버튼은 무조건 v-form 내에 -->
                 <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
-                <v-btn>이미지 업로드</v-btn>
+
+                <!-- 이미지 업로드를 위해 반드시 필요 -->
+                <input ref="imageInput" type="file" multiple hidden @change="onChangeImages">
+                <!-- form 내 버튼은 진짜 form을 제출하는 역할의 button을 제외(type="submit")하고는 모두 type="button"으로 적어주어야 함
+                    왜냐하면, form 내의 버튼은 클릭하면 데이터를 전송해 버리므로 구분 필수 -->
+                <v-btn type="button" @click="onClickImageUpload">이미지 업로드</v-btn>
             </v-form>
         </v-container>
     </v-card>
@@ -91,8 +96,25 @@ export default {
                     })
             }
         },
-    }
-}
+        onClickImageUpload() {
+            // click event를 작동시키기 위해서는 DOM에 접근해야 함 -> ref 이용
+            this.$refs.imageInput.click();
+        },
+        onChangeImages(e) {
+            // 사진을 고르면 해당 이벤트가 발생하며, 파일은 e.target.files내에 들어감
+            console.log(e.target.files); 
+            
+            const imageFormData = new FormData(); // FormData를 프로그래밍적으로 만들 수 있음
+
+            // e.target.files : 배열처럼 보이지만 배열이 아닌, 유사배열로 (array like object -> forEach 사용불가)
+            // ! forEach를 사용하기 위해 아래와 같은 방식을 사용해야 함
+            [].forEach.call(e.target.files, (f) => { // files 내 파일들을 각각 하나씩 따로 떼어서
+                imageFormData.append('image', f);  // 같은 key로 formData에 append -> { image: [file1, file2] };
+            });
+            this.$store.dispatch('posts/uploadImages', imageFormData);
+        },
+    },
+};
 </script>
 
 <style>
