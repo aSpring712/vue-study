@@ -22,7 +22,11 @@ passportConfig(); // 서버가 시작될 때, 시퀄라이즈도 동작시키고
 
 // 요청이 왔을 때, 대해 console에 기록해 줌
 app.use(morgan('dev')); // 보통 맨 위에다 써줌
-app.use(cors('http://localhost:3000')); // () 이렇게 하면 모든 요청을 다 허용하므로 실무에서는 절대 이렇게하면 안됨 -> 정확하게 허용할 프론트 주소 적어주기
+// app.use(cors('http://localhost:3000')); // () 이렇게 하면 모든 요청을 다 허용하므로 실무에서는 절대 이렇게하면 안됨 -> 정확하게 허용할 프론트 주소 적어주기
+app.use(cors({
+    origin: 'http://localhost:3000', // front 주소
+    credentials: true, // ! 서버 쪽에는 해당 옵션 주어야 front와 서버 간 cookie를 주고받을 수 있음
+}));
 // express는 body로 Json data를 받지못하므로 써주어야 함
 app.use(express.json()); // 요청으로 온 json data를 parsing(해석)해서 req.body에 넣어줌 // * req.body 만들어 줌
 app.use(express.urlencoded({ extended: false })); // form에서 action을 통해 전송할 때, 그 데이터를 해석해서 req.body에 넣어줌 // * req.body 만들어 줌
@@ -33,6 +37,11 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     secret: 'cookiesecret', // 쿠키는 암호화 할 수 있고, 그 암호화 한 것을 해독할 수 있는 key가 있음
+    // front로 cookie가 전송되도록 하려면
+    cookie: { // ! CORS와 비슷하게 front와 back의 서버가 서로 다를 때는 쿠키가 저장이 되지않을 수 있음 -> 요청보낼 때, 3번재 option으로 withCredentials: true, 넣어주기
+        httpOnly: true,
+        secure: false,
+    },
 })); 
 app.use(passport.initialize()); // 요청(로그인, 로그아웃 기능 만들어 줌)
 app.use(passport.session()); // 사용자 로그인 정보를 기록할 수 있는 session을 만들어 줌 -> 이걸 사용하려면 express session 설치 필요 ( app.use(session()); )
@@ -75,14 +84,36 @@ app.post('/user', async (req, res, next) => { // promise이기 때문에 async a
             // 이렇게 해도 back단에서 중복을 잡아내지 못할 수도 있음 -> db단에서 걸러내야 함 -> unique: true
         }
 
-        const newUser = await db.User.create({
+        // 회원 등록
+        // const newUser =
+        await db.User.create({
             email: req.body.email, 
             // password: req.body.password, 
             password: hash, 
             nickname: req.body.nickname,
         });    
         // 200 -> 성공, 201 -> 성공적으로 생성됨 (HTTP STATUS CODE)
-        return res.status(201).json(newUser); // send는 문자열로 응답할 때, 응답 body에 json으로 응답 할 겨우 .json()
+
+        // 회원가입에 성공 시 그 정보 그대로 바로 로그인 처리
+        passport.authenticate('local', (err, user, info) => { 
+        if (err) {
+            console.error(err);
+            return next(err);
+        }
+        if (info) {
+            return res.status(401).send(info.reason); 
+        }
+        
+        return req.login(user, async (err) => {
+            if (err) {
+                console.error(err);
+                return next(err);
+            }
+            return res.json(user);
+        }); 
+    })(req, res, next);
+
+        // return res.status(201).json(newUser); // send는 문자열로 응답할 때, 응답 body에 json으로 응답 할 겨우 .json()
     } catch(err) {
         console.log(err);
         return next(err); // next는 라우터에서 보통 err를 넘긴다고 보면 됨
@@ -108,7 +139,7 @@ const user = {
     // cookie인 connect.sid는 req.login에서 보내줌 -> body를 통해 추가적인 데이터는 passport.authenticate() 내 return res.json() 에서 보내줌
 };
 
-app.post('/user/login', (req, res) => { // * 1. front에서 email, pwd를 가지고 post 요청을 보냄 -> req.body에 담김 
+app.post('/user/login', (req, res, next) => { // * 1. front에서 email, pwd를 가지고 post 요청을 보냄 -> req.body에 담김 
     // req.body.email;
     // req.body.password;
     // // 로그인 시 세션을 이렇게 지정해도 되지만 실무에서는 사용하지 않음 -> 보통 passport 모듈 사용함
@@ -158,6 +189,14 @@ app.post('/user/login', (req, res) => { // * 1. front에서 email, pwd를 가지
         }); 
     })(req, res, next);
 });
+
+// ! router 전에는 항상 deserializeUser가 실행됨
+app.post('/post', (req, res) => {
+    // if(req.user) 또는
+    if (req.isAuthenticated()) { // 이것으로 로그인을 했는지, 아닌지를 검사할 수 있음
+        
+    }
+})
 
 app.listen(3085, () => {
     console.log(`백엔드 서버 ${3085}번 포트에서 작동중.`);
